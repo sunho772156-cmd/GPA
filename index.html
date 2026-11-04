@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#11120f" />
+  <meta name="description" content="A quiet, private-feeling GPA calculator. Add your classes and see where you stand." />
+  <title>Secret Mode GPA Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; --bg:#11120f; --panel:#191a16; --panel2:#20211c; --line:#34352e; --text:#f1f0e9; --muted:#99998e; --lime:#d6f379; --orange:#ff9d62; }
+    * { box-sizing:border-box }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+    body::before { content:""; position:fixed; inset:0; z-index:-2; opacity:.16; background-image:radial-gradient(#77786e 0.65px, transparent .65px); background-size:19px 19px; mask-image:linear-gradient(to bottom,black,transparent 82%); }
+    .ambient { position:fixed; width:360px; height:360px; border-radius:50%; filter:blur(110px); opacity:.10; pointer-events:none; z-index:-1; animation:drift 15s ease-in-out infinite alternate; }
+    .ambient.one { background:#d2ed73; top:-190px; left:12% } .ambient.two { background:#ff8f53; right:-230px; bottom:8%; animation-delay:-7s }
+    @keyframes drift { to { transform:translate(90px,65px) scale(1.22) } }
+    .shell { width:min(1080px, calc(100% - 48px)); margin:auto; }
+    header { height:82px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #ffffff12; }
+    .brand { display:flex; align-items:center; gap:11px; font:600 13px 'Space Grotesk',sans-serif; letter-spacing:.015em; }
+    .brand-mark { width:30px; height:30px; border:1px solid #55574c; border-radius:9px; display:grid; place-items:center; color:var(--lime); font-size:16px; }
+    .private { display:flex; align-items:center; gap:8px; padding:8px 11px; border:1px solid #393a33; border-radius:99px; color:#b6b6aa; font:11px 'DM Mono',monospace; letter-spacing:.05em; }
+    .private i { width:6px; height:6px; border-radius:50%; background:var(--lime); box-shadow:0 0 10px #d6f37988; }
+    main { padding:66px 0 76px; }
+    .intro { text-align:center; max-width:650px; margin:0 auto 43px; }
+    .eyebrow { color:var(--lime); font:11px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.18em; display:flex; align-items:center; justify-content:center; gap:10px; }
+    .eyebrow::before,.eyebrow::after { content:""; width:22px; height:1px; background:#899657; }
+    h1 { font:500 clamp(40px,7vw,70px)/1.02 'Space Grotesk',sans-serif; letter-spacing:-.065em; margin:18px 0 14px; }
+    h1 span { color:var(--lime); }
+    .intro p { color:var(--muted); font-size:15px; line-height:1.65; margin:0; }
+    .workspace { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(280px,.8fr); gap:16px; align-items:start; }
+    .card { background:linear-gradient(145deg,#1b1c18f2,#171814f5); border:1px solid #ffffff13; border-radius:17px; box-shadow:0 24px 80px #00000025; }
+    .courses { padding:22px; }
+    .card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+    h2 { font:600 16px 'Space Grotesk',sans-serif; margin:0; letter-spacing:-.02em; }
+    .count { color:var(--muted); font:11px 'DM Mono',monospace; margin-top:4px; }
+    button { font:500 12px 'DM Sans',sans-serif; cursor:pointer; transition:transform .18s,border-color .18s,background .18s; }
+    button:hover { transform:translateY(-1px); }
+    .add-btn { background:#27291f; color:var(--lime); border:1px solid #484b38; border-radius:8px; padding:9px 12px; }
+    .add-btn:hover { background:#303324; border-color:#777d52; }
+    .table-head,.course-row { display:grid; grid-template-columns:minmax(100px,1fr) 94px 112px 28px; gap:10px; align-items:center; }
+    .table-head { padding:0 10px 9px; color:#77786e; font:10px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.1em; }
+    .course-list { display:grid; gap:8px; }
+    .course-row { padding:9px 10px; border:1px solid #ffffff0d; border-radius:10px; background:#ffffff04; animation:rise .26s ease both; }
+    @keyframes rise { from { opacity:0; transform:translateY(7px) } }
+    input,select { width:100%; min-width:0; height:38px; padding:0 10px; background:#11120f; color:var(--text); border:1px solid #373830; border-radius:7px; outline:none; font:12px 'DM Sans',sans-serif; }
+    input::placeholder { color:#68695f; }
+    input:focus,select:focus { border-color:#9bac58; box-shadow:0 0 0 3px #d6f37912; }
+    select { cursor:pointer; }
+    select option { background:#1b1c18; }
+    .remove { border:0; background:none; color:#73746a; padding:5px; font-size:18px; line-height:1; border-radius:6px; }
+    .remove:hover { color:#ff977e; background:#ff977e12; }
+    .empty { text-align:center; color:var(--muted); padding:28px 10px; font-size:13px; }
+    .note { margin:15px 2px 0; color:#797a70; font-size:11px; line-height:1.5; }
+    .result { padding:22px; position:relative; overflow:hidden; }
+    .result::after { content:""; position:absolute; width:190px; height:190px; border:1px solid #d6f37916; border-radius:50%; right:-112px; top:52px; box-shadow:0 0 0 22px #d6f37907,0 0 0 45px #d6f37905; pointer-events:none; }
+    .result-label { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font:10px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.12em; }
+    .result-label b { color:var(--lime); font-weight:400; }
+    .score-wrap { margin:29px 0 25px; display:flex; align-items:flex-end; gap:8px; position:relative; }
+    .score { font:500 78px/.9 'Space Grotesk',sans-serif; letter-spacing:-.08em; color:var(--lime); transition:opacity .2s,transform .2s; }
+    .score.bump { animation:bump .32s ease; }
+    @keyframes bump { 50% { transform:translateY(-4px) scale(1.035) } }
+    .out-of { color:#8d8e83; font:12px 'DM Mono',monospace; padding-bottom:5px; }
+    .meter { height:4px; border-radius:9px; background:#34352f; overflow:hidden; }
+    .meter-fill { height:100%; width:0; border-radius:inherit; background:linear-gradient(90deg,#b3d24e,var(--lime)); transition:width .55s cubic-bezier(.2,.75,.2,1); }
+    .caption { color:#a8a99d; font-size:12px; margin:10px 0 24px; }
+    .stat-grid { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid #ffffff12; }
+    .stat { padding:16px 0 3px; }
+    .stat + .stat { border-left:1px solid #ffffff12; padding-left:16px; }
+    .stat-label { color:#85867b; font:10px 'DM Mono',monospace; text-transform:uppercase; letter-spacing:.08em; }
+    .stat-value { margin-top:7px; font:500 20px 'Space Grotesk',sans-serif; }
+    .reset { margin-top:23px; width:100%; height:40px; color:#aaa99e; background:transparent; border:1px solid #393a33; border-radius:8px; }
+    .reset:hover { border-color:#64665a; color:var(--text); background:#ffffff06; }
+    footer { display:flex; justify-content:center; gap:7px; align-items:center; color:#66675e; font:10px 'DM Mono',monospace; margin-top:24px; }
+    footer span { color:var(--lime); font-size:13px; }
+    @media(max-width:720px) { main { padding:49px 0 56px } .workspace { grid-template-columns:1fr } .result { order:-1 } .score-wrap { margin:21px 0 19px } .score { font-size:68px } .intro { margin-bottom:30px } }
+    @media(max-width:430px) { .shell { width:calc(100% - 28px) } header { height:68px } .brand { font-size:12px } .private { font-size:9px; padding:7px 9px } .courses,.result { padding:16px } .table-head,.course-row { grid-template-columns:minmax(75px,1fr) 70px 85px 22px; gap:6px } input,select { padding:0 7px; font-size:11px } .table-head { font-size:9px; letter-spacing:.04em } .course-row { padding:7px 6px } }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important } }
+  </style>
+</head>
+<body>
+  <div class="ambient one"></div><div class="ambient two"></div>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark">◉</span> Secret Mode GPA Calculator</div>
+      <div class="private"><i></i> PRIVATE SESSION</div>
+    </header>
+    <main>
+      <section class="intro">
+        <div class="eyebrow">your grades, your business</div>
+        <h1>Calculate in<br><span>secret mode.</span></h1>
+        <p>A little clarity, without the spotlight.<br>Add your classes and see your GPA take shape.</p>
+      </section>
+      <section class="workspace" aria-label="GPA calculator">
+        <div class="card courses">
+          <div class="card-head">
+            <div><h2>Your courses</h2><div class="count" id="course-count">03 CLASSES</div></div>
+            <button class="add-btn" id="add-course" type="button">＋ Add course</button>
+          </div>
+          <div class="table-head"><span>Course name</span><span>Credits</span><span>Grade</span><span></span></div>
+          <div class="course-list" id="course-list"></div>
+          <p class="note">Your grades stay right here in this browser. Nothing is saved or sent anywhere.</p>
+        </div>
+        <aside class="card result" aria-live="polite">
+          <div class="result-label"><span>Semester GPA</span><b>✳ LIVE</b></div>
+          <div class="score-wrap"><div class="score" id="gpa">3.72</div><div class="out-of">/ 4.00</div></div>
+          <div class="meter"><div class="meter-fill" id="meter-fill"></div></div>
+          <p class="caption" id="caption">A strong semester is taking shape.</p>
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-label">Total credits</div><div class="stat-value" id="total-credits">9</div></div>
+            <div class="stat"><div class="stat-label">Courses</div><div class="stat-value" id="total-courses">3</div></div>
+          </div>
+          <button class="reset" id="reset" type="button">Reset calculator</button>
+        </aside>
+      </section>
+      <footer><span>✳</span> NO ACCOUNT. NO HISTORY. JUST THE MATH.</footer>
+    </main>
+  </div>
+  <script>
+    const grades = [
+      ['A+',4.0],['A',4.0],['A−',3.7],['B+',3.3],['B',3.0],['B−',2.7],['C+',2.3],['C',2.0],['C−',1.7],['D+',1.3],['D',1.0],['F',0.0]
+    ];
+    let courses = [
+      { name:'Design systems', credits:3, grade:'A' },
+      { name:'Data & society', credits:3, grade:'A−' },
+      { name:'Visual culture', credits:3, grade:'B+' }
+    ];
+    const list = document.getElementById('course-list');
+    const gradeOptions = (selected) => grades.map(([label]) => `<option value="${label}" ${label===selected?'selected':''}>${label}</option>`).join('');
+    function render() {
+      list.innerHTML = courses.length ? courses.map((c,i) => `
+        <div class="course-row" data-index="${i}">
+          <input aria-label="Course ${i+1} name" class="name-input" maxlength="48" placeholder="Course name" value="${escapeAttr(c.name)}">
+          <select aria-label="Course ${i+1} credits" class="credit-input">${[1,2,3,4,5,6].map(n=>`<option value="${n}" ${Number(c.credits)===n?'selected':''}>${n} ${n===1?'cr':'cr'}</option>`).join('')}</select>
+          <select aria-label="Course ${i+1} grade" class="grade-input">${gradeOptions(c.grade)}</select>
+          <button class="remove" aria-label="Remove ${escapeAttr(c.name||'course')}" title="Remove course" type="button">×</button>
+        </div>`).join('') : '<div class="empty">No courses yet. Add a class to get started.</div>';
+      document.getElementById('course-count').textContent = `${String(courses.length).padStart(2,'0')} ${courses.length===1?'CLASS':'CLASSES'}`;
+      document.getElementById('total-courses').textContent = courses.length;
+      calculate();
+    }
+    function escapeAttr(value) { return String(value).replace(/[&<>"']/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+    function calculate() {
+      const credits = courses.reduce((sum,c)=>sum+(Number(c.credits)||0),0);
+      const points = courses.reduce((sum,c)=>sum+(Number(c.credits)||0)*(grades.find(g=>g[0]===c.grade)?.[1]||0),0);
+      const gpa = credits ? points/credits : 0;
+      const value = gpa.toFixed(2);
+      const score = document.getElementById('gpa');
+      if (score.textContent !== value) { score.textContent=value; score.classList.remove('bump'); void score.offsetWidth; score.classList.add('bump'); }
+      document.getElementById('total-credits').textContent = credits;
+      document.getElementById('meter-fill').style.width = `${Math.min(gpa/4*100,100)}%`;
+      document.getElementById('caption').textContent = !credits ? 'Add a course to see your GPA.' : gpa>=3.7 ? 'A strong semester is taking shape.' : gpa>=3 ? 'Steady progress. Keep it going.' : 'Every class is a fresh start.';
+    }
+    list.addEventListener('input', e => {
+      const row=e.target.closest('.course-row'); if(!row) return;
+      const i=Number(row.dataset.index);
+      if(e.target.classList.contains('name-input')) courses[i].name=e.target.value;
+      if(e.target.classList.contains('credit-input')) courses[i].credits=e.target.value;
+      if(e.target.classList.contains('grade-input')) courses[i].grade=e.target.value;
+      calculate();
+    });
+    list.addEventListener('change', e => {
+      const row=e.target.closest('.course-row'); if(!row) return;
+      const i=Number(row.dataset.index);
+      if(e.target.classList.contains('credit-input')) courses[i].credits=e.target.value;
+      if(e.target.classList.contains('grade-input')) courses[i].grade=e.target.value;
+      calculate();
+    });
+    list.addEventListener('click', e => {
+      const button=e.target.closest('.remove'); if(!button) return;
+      courses.splice(Number(button.closest('.course-row').dataset.index),1); render();
+    });
+    document.getElementById('add-course').addEventListener('click',()=>{ courses.push({name:'',credits:3,grade:'A'}); render(); list.lastElementChild?.querySelector('input')?.focus(); });
+    document.getElementById('reset').addEventListener('click',()=>{ courses=[]; render(); });
+    render();
+  </script>
+</body>
+</html>
