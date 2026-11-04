@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#11120f" />
   <meta name="description" content="A quiet, private-feeling GPA calculator. Add your classes and see where you stand." />
-  <title>Secret Mode GPA Calculator</title>
+  <title>GPA 계산기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,6 +29,16 @@
     .eyebrow::before,.eyebrow::after { content:""; width:22px; height:1px; background:#899657; }
     h1 { font:500 clamp(40px,7vw,70px)/1.02 'Space Grotesk',sans-serif; letter-spacing:-.065em; margin:18px 0 14px; }
     h1 span { color:var(--lime); }
+    .intro-icon { width:54px; height:54px; margin:0 auto 19px; border-radius:17px; display:grid; place-items:center; background:#090a08; border:1px solid #414239; box-shadow:0 9px 28px #0008, inset 0 1px #ffffff12; animation:icon-float 5s ease-in-out infinite; }
+    .intro-icon svg { width:33px; height:33px; overflow:visible; }
+    .icon-lens { transform-box:fill-box; transform-origin:center; animation:lens-drift 6s ease-in-out infinite alternate; }
+    .icon-spark { transform-box:fill-box; transform-origin:center; animation:spark-drift 4s ease-in-out infinite alternate; }
+    h1 .title-word { display:inline-block; color:var(--text); animation:title-shape 6s ease-in-out infinite; }
+    h1 .title-word:nth-child(2) { animation-delay:-3s; }
+    @keyframes icon-float { 0%,100% { transform:translateY(0) rotate(-3deg) } 50% { transform:translateY(-6px) rotate(3deg) } }
+    @keyframes lens-drift { to { transform:translate(1px,-1px) rotate(-5deg) } }
+    @keyframes spark-drift { to { transform:translate(-1px,1px) rotate(12deg) } }
+    @keyframes title-shape { 0%,100% { transform:translateY(0) rotate(0); } 50% { transform:translateY(-4px) rotate(-1deg); } }
     .intro p { color:var(--muted); font-size:15px; line-height:1.65; margin:0; }
     .workspace { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(280px,.8fr); gap:16px; align-items:start; }
     .card { background:linear-gradient(145deg,#1b1c18f2,#171814f5); border:1px solid #ffffff13; border-radius:17px; box-shadow:0 24px 80px #00000025; }
@@ -84,27 +94,36 @@
   <div class="ambient one"></div><div class="ambient two"></div>
   <div class="shell">
     <header>
-      <div class="brand"><span class="brand-mark">◉</span> Secret Mode GPA Calculator</div>
+      <div class="brand"><span class="brand-mark">◉</span> GPA 계산기</div>
       <div class="private"><i></i> PRIVATE SESSION</div>
     </header>
     <main>
       <section class="intro">
-        <div class="eyebrow">your grades, your business</div>
-        <h1>Calculate in<br><span>secret mode.</span></h1>
+        <div class="intro-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 20.5C10.8 14.2 16.8 10 24 10s13.2 4.2 16 10.5" stroke="#D6F379" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M10 22h28l-3.4 12.7a4 4 0 0 1-3.9 2.9H17.3a4 4 0 0 1-3.9-2.9L10 22Z" fill="#D6F379"/>
+            <g class="icon-lens"><circle cx="19" cy="27.5" r="3.2" fill="#11120F"/><path d="M16.8 26.6a2.45 2.45 0 0 1 4.3-.8" stroke="#F1F0E9" stroke-width=".85" stroke-linecap="round"/></g>
+            <g class="icon-lens"><circle cx="29" cy="27.5" r="3.2" fill="#11120F"/><path d="M26.8 26.6a2.45 2.45 0 0 1 4.3-.8" stroke="#F1F0E9" stroke-width=".85" stroke-linecap="round"/></g>
+            <path d="M20 33c2.3 1.8 5.7 1.8 8 0" stroke="#11120F" stroke-width="1.5" stroke-linecap="round"/>
+            <path class="icon-spark" d="m37.2 10 .8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8.8-2.1Z" fill="#F1F0E9"/>
+          </svg>
+        </div>
+        <h1><span class="title-word">GPA</span> <span class="title-word">계산기</span></h1>
         <p>A little clarity, without the spotlight.<br>Add your classes and see your GPA take shape.</p>
       </section>
       <section class="workspace" aria-label="GPA calculator">
         <div class="card courses">
           <div class="card-head">
             <div><h2>Your courses</h2><div class="count" id="course-count">03 CLASSES</div></div>
-            <button class="add-btn" id="add-course" type="button">＋ Add course</button>
+            <button class="add-btn" id="add-course" type="button">+ Add course</button>
           </div>
           <div class="table-head"><span>Course name</span><span>Credits</span><span>Grade</span><span></span></div>
           <div class="course-list" id="course-list"></div>
           <p class="note">Your grades stay right here in this browser. Nothing is saved or sent anywhere.</p>
         </div>
         <aside class="card result" aria-live="polite">
-          <div class="result-label"><span>Semester GPA</span><b>✳ LIVE</b></div>
+          <div class="result-label"><span>Semester GPA</span><b>* LIVE</b></div>
           <div class="score-wrap"><div class="score" id="gpa">3.72</div><div class="out-of">/ 4.00</div></div>
           <div class="meter"><div class="meter-fill" id="meter-fill"></div></div>
           <p class="caption" id="caption">A strong semester is taking shape.</p>
@@ -115,7 +134,7 @@
           <button class="reset" id="reset" type="button">Reset calculator</button>
         </aside>
       </section>
-      <footer><span>✳</span> NO ACCOUNT. NO HISTORY. JUST THE MATH.</footer>
+      <footer><span>*</span> NO ACCOUNT. NO HISTORY. JUST THE MATH.</footer>
     </main>
   </div>
   <script>
