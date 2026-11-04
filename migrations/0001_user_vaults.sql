@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS user_vaults (
+  username TEXT PRIMARY KEY COLLATE NOCASE,
+  salt TEXT NOT NULL,
+  auth_hash TEXT NOT NULL UNIQUE,
+  vault_iv TEXT NOT NULL,
+  vault_ciphertext TEXT NOT NULL,
+  revision INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+  bucket TEXT NOT NULL,
+  window_start INTEGER NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (bucket, window_start)
+);
